@@ -11,9 +11,12 @@ class HupaiCheck:
     # 下一个版本的改进：输入不一定要输入28个字符，即2m3m4m应该被允许输入成234m，支持东南西北白发中输入
 
     # 突然发现的问题：没做吃碰杠，计划改成负数来
-    def __init__(self, *, tehai='', numtehai=[]):
+    def __init__(self, *, tehai='', numtehai=None):
         self.tehai = tehai              # 手牌，用mspz表示的
-        self.numtehai = numtehai[:]        # 手牌，用数字列表记录的东西          
+        if not numtehai:
+            self.nunmtehai = []
+        else:
+            self.numtehai = numtehai[:]        # 手牌，用数字列表记录的东西          
 
         # 胡牌拆分完毕的嵌套列表，如果没胡是空列表，和了的话最大列表的第一层列表是胡牌形式，里面的每一个列表是拆分成
         # 33332中的一份、或者七对子的一对，或者国士无双的所有内容
