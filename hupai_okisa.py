@@ -1,8 +1,221 @@
-from hnk05_hupai_abstest import hupai_check
+from hnk05_hupai_abstest import HupaiCheck
 
 # 6.29 2:43:fulu还是专门写出来比较好，作为可选参数带进去
 
-class hupai_okisa:
+class Yi:
+    # 拆完的牌型
+    FM_NORMAL = 0      # 33332
+    FM_77 = 1          # 7对
+    FM_GUOSHI = 2      # 国士
+
+    def __init__(self):
+        pass
+
+    # 检查是否有这种役，base表示场况，是个字典
+    # @abstractmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        pass
+
+class DaSiXi(Yi):
+    name = '大四喜'
+    yakuman = 2
+    fan = 26
+    # 下位役
+    down = ['小四喜']
+    fuluminus = False       # 副露是否减番
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_NORMAL:
+            return False
+
+class GuoShi13(Yi):
+    name = '国士无双十三面'
+    yakuman = 2
+    fan = 26
+    down = ['国士无双']
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_GUOSHI:
+            return False
+
+class ChunZhengJiuLian(Yi):
+    name = '纯正九莲宝灯'
+    yakuman = 2
+    fan = 26
+    down = ['九莲宝灯']
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_NORMAL:
+            return False
+
+class SiAnKeDanJi(Yi):
+    name = '四暗刻单骑'
+    yakuman = 2
+    fan = 26
+    down = ['四暗刻']
+    fuluminus = False
+
+class XiaoSiXi(Yi):
+    name = '小四喜'
+    yakuman = 1
+    fan = 13
+    down = []
+    fuluminus = False
+
+class TianHu(Yi):
+    name = '天和'
+    yakuman = 1
+    fan = 13
+    down = []
+    fuluminus = False
+
+class DiHu(Yi):
+    name = '地和'
+
+class RenHu(Yi):
+    name = '人和'
+
+class SiGangZi(Yi):
+    name = '四杠子'
+
+class SiAnKe(Yi):
+    name = '四暗刻'
+    yakuman = 1
+    fan = 13
+    down = []
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_NORMAL:
+            return False
+        symbol = 0
+        for tehais in tehai[:4]:
+            if (tehais[0] == tehais[1] and tehais[0] == tehais[2]) and tehais[0] > 0:
+                symbol += 1
+        if symbol == 4:
+            return True
+        else:
+            return False
+
+class QingLaoTou(Yi):
+    name = '清老头'
+    yakuman = 1
+    fan = 13
+    down = []
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_NORMAL:
+            return False
+        for tehais in tehai:
+            symbol = True
+            for tehai in tehais:
+                if abs(tehai) not in qingyaojiu:
+                    symbol = False
+            if not symbol:
+                return False
+        return True
+
+class DaSanYuan(Yi):
+    name = '大三元'
+    yakuman = 1
+    fan = 13
+    down = []
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        if not format == Yi.FM_NORMAL:
+            return False
+        sanyuan = 0
+        for tehais in tehai:
+            if tehais in [[37, 37, 37], [-37, -37, -37], [38, 38, 38], [-38, -38, -38], [40, 40, 40], [-40, -40, -40]]:
+                sanyuan += 1
+        if sanyuan == 3:
+            return True
+        return False
+
+class HunLaoTou(Yi):
+    name = '混老头'
+    yakuman = 0
+    fan = 2
+    down = ['混全带幺九']
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        # 混老头
+        if format == Yi.FM_NORMAL:
+            for tehais in tehai:
+                symbol = True
+                for tehai in tehais:
+                    if abs(tehai) not in yaojiu:
+                        symbol = False
+                if not symbol:
+                    return False
+            return True
+        elif format == Yi.FM_77:
+            for tehais in tehai:
+                symbol = True
+                for tehai in tehais:
+                    if abs(tehai) not in yaojiu:
+                        symbol = False
+                if not symbol:
+                    return False
+            return True
+        else:
+            return False
+
+class ChunQuanDaiYaoJiu(Yi):
+    name = '纯全带幺九'
+    yakuman = 0
+    fan = 3
+    down = ['混全带幺九']
+    fuluminus = True
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        # 纯全带幺九
+        if not format == Yi.FM_NORMAL:
+            return False
+        for tehais in tehai:
+            symbol = False
+            for tehai in tehais:
+                if abs(tehai) in qingyaojiu:
+                    symbol = True
+            if not symbol:
+                return False
+        return True
+
+class LiangBeiKou(Yi):
+    name = '两杯口'
+    yakuman = 0
+    fan = 2
+    down = ['一杯口', '七对子']  # 两杯口一定比七对大吗
+    fuluminus = False
+
+    @staticmethod
+    def check(tehai, *, format=Yi.FM_NORMAL, base={}):
+        # 两杯口
+        if not format == Yi.FM_NORMAL:
+            return False
+        tehai_yibeikousymbol = set(tuple(s) for s in tehai)
+        tehai_yibeikousymbol = [list(t) for t in tehai_yibeikousymbol]
+        tehai_yibeikousymbol.sort()
+        if tehai_yibeikousymbol != tehai and fulusymbol < 2 and len(tehai_yibeikousymbol) == 3 and fulusymbol:
+            return 2
+        else:
+            return 0
+
+
+class HupaiOkisa:
     # 胡牌大小判断
     # 一番：立直s 役牌o 番牌s 断幺o 平胡s 门清自摸o 一发s 岭上开花s 海底摸月s
     # 两番：一杯口o 两立直s 一气通贯o 小三元o 三色同顺o 三色同刻o 三暗刻o 三杠子s 混全o 七对 对对o 两杯口o
@@ -11,6 +224,7 @@ class hupai_okisa:
     # 六番：清一色
     # 十三番：小四喜 天和s 地和s 人和s 四杠子s 四暗刻o 清老头o 绿一色 九莲宝灯 国士无双 大三元o
     # 二十六番：大四喜 国士无双十三面 纯正九莲宝灯 四暗刻单骑s
+
     def __init__(self):
         self.tehai14 = []
         self.lizhi_symbol = False
@@ -18,12 +232,46 @@ class hupai_okisa:
         self.gangshanghua_symbol = False
         self.gang = []
         self.akadora = []
-        global yaojiu  # 幺九字牌
-        yaojiu = [1, 9, 11, 19, 21, 29, 31, 32, 34, 35, 37, 38, 40]
-        global qingyaojiu  # 幺九牌
-        qingyaojiu = [1, 9, 11, 19, 21, 29]
-        global jihai  # 字牌
-        jihai = [31, 32, 34, 35, 37, 38, 40]
+
+        self.yakuman = 0   # 几倍役满
+        self.fan = 0       # 几番
+
+    def dealall(self, tehai):
+        yiman = [DaSiXi, GuoShi13, ]   # 役满
+        others = [DuanYaoJiu, LiZhi, ] # 其他役
+
+        yiman_num = 0
+        fan_num = 0
+
+        # 想法得到format和场况
+        format = Yi.FM_NORMAL
+        base = {
+            'fulu': False,
+            'all_wind': 'Dong',
+            'self_wind': 'Nan',
+            'zimo': False
+        }
+
+        # 检查役满
+        for y in yiman:
+            check = y.check(tehai, format=format, base=base)
+            if check:
+                yiman_num += y.yakuman
+                # 移除其他役种
+                for i in y.down:
+                    yiman.remove(i)
+        
+        if yiman_num > 0:
+            pass
+        else:
+            # 算其他番
+
+        # 宝牌
+
+        # 算符
+
+        # 计算得分
+
 
     def fulusymbol(self,tehai33332):
         fulus = 0
@@ -31,10 +279,14 @@ class hupai_okisa:
             for tehai in tehais:
                 if tehai < 0:
                     fulus += 1
+        
+        '''
         if fulus < 2:
             return True
         else:
             return False
+        '''
+        return fulus < 2
 
     def tanyao(self, tehai33332):
         for tehais in tehai33332:
@@ -54,46 +306,6 @@ class hupai_okisa:
                 return 0
 
         return 1
-
-    def jyuntyan(self, tehai33332,fulusymbol=True):
-        # 纯全带幺九
-        for tehais in tehai33332:
-            symbol = False
-            for tehai in tehais:
-                if abs(tehai) in qingyaojiu:
-                    symbol = True
-            if not symbol:
-                return 0
-        if not fulusymbol:
-            return 1
-        return 2
-
-    def hunlaotou(self, tehai33332, fulusymbol = True):
-        # 混老头
-        for tehais in tehai33332:
-            symbol = True
-            symbolfulu = True
-            for tehai in tehais:
-                if abs(tehai) not in yaojiu:
-                    symbol = False
-                if tehai < 0:
-                    symbolfulu = False
-            if not symbol:
-                return 0
-        if not fulusymbol:
-            return 2
-        return 3
-
-    def qinglaotou(self, tehai33332):
-        # 清老头
-        for tehais in tehai33332:
-            symbol = True
-            for tehai in tehais:
-                if abs(tehai) not in qingyaojiu:
-                    symbol = False
-            if not symbol:
-                return 0
-        return 13
 
     def haku(self, tehai33332):
         # 三元牌：白
@@ -116,14 +328,6 @@ class hupai_okisa:
                 return 1
         return 0
 
-    def dasanyuan(self, tehai33332):
-        sanyuan = 0
-        for tehais in tehai33332:
-            if tehais in [[37, 37, 37], [-37, -37, -37], [38, 38, 38], [-38, -38, -38], [40, 40, 40], [-40, -40, -40]]:
-                sanyuan += 1
-        if sanyuan == 3:
-            return 13
-        return 0
 
     def xiaosanyuan33332(self,tehai33332):
         # 33332形小三元
@@ -179,16 +383,6 @@ class hupai_okisa:
         tehai_yibeikousymbol.sort()
         if tehai_yibeikousymbol != tehai33332 and fulusymbol < 2 and len(tehai_yibeikousymbol) == 4 and fulusymbol:
             return 1
-        else:
-            return 0
-
-    def liangbeikou(self,tehai33332, fulusymbol = True):
-        # 两杯口
-        tehai_yibeikousymbol = set(tuple(s) for s in tehai33332)
-        tehai_yibeikousymbol = [list(t) for t in tehai_yibeikousymbol]
-        tehai_yibeikousymbol.sort()
-        if tehai_yibeikousymbol != tehai33332 and fulusymbol < 2 and len(tehai_yibeikousymbol) == 3 and fulusymbol:
-            return 2
         else:
             return 0
 
@@ -333,8 +527,8 @@ if __name__ == '__main__':
     '''
     # 对对胡三暗刻四暗刻测试代码
     # 一气通贯测试代码
-    deal = hupai_check()
-    pai = hupai_okisa()
+    deal = HupaiCheck()
+    pai = HupaiOkisa()
     yitsutry = [11,12,13,14,15,16,-17,-18,-19,31,31,31,34,34]
     yitsu = deal.hupai_dealall(yitsutry)
     print(yitsu)
