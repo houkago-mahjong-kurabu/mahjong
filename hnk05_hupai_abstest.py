@@ -142,5 +142,7 @@ class HupaiCheck:
 if __name__ == '__main__':
     pai = '1m1m1m2m3m4m5m6m7m8m9m9m9m9m'
     hc = HupaiCheck(tehai=pai, numtehai=HupaiCheck.tehaitonumtehai(pai))
+    hc.numtehai = [31,31,31,32,-32,32,34,34,34,1,2,3,4,4]
     hc.hupai_dealall()
+    print(hc.hupai32_deal())
     hc.hupaiway_usersee()
