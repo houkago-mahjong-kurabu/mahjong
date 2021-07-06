@@ -1,8 +1,10 @@
+import hupai_okisa
 from hnk05_hupai_abstest import HupaiCheck
 from global_data import yaojiu, qingyaojiu, jihai, windtopai, numtopai, numtowind, windtonum
 from pai import Pai
 from player import Player
 from paiyama import PaiYama
+from hnk05_tingpai import TingpaiCheck
 import random
 
 
@@ -49,13 +51,40 @@ def jd2_zimo(who):
     if hp.hupai_dealall() != []:
         players[who].base['zimo'] = True
         print(players[who].hupaicheck(players[who].tehai,players[who].base))
+    # 注意这里的hupaicheck还得再改改
 
-        '''
 def jd2_lizhi(who):
-    # 2：自摸响应、暗杠/加杠响应、立直响应阶段之立直
+    # 2：自摸响应、暗杠/加杠响应、立直响应阶段之立直，输入该用户手牌返回可立直时的切牌
+    lizhichupai = []
+    for tehai in players[who].tehai:
+        lizhicheck = players[who].tehai + []
+        lizhicheck.remove(tehai)
+        if TingpaiCheck.machi_question(lizhicheck) != []:
+            lizhichupai += [tehai]
+    return lizhichupai
 
 def jd2_gang(who):
-    # 2：自摸响应、暗杠/加杠响应、立直响应阶段之杠
+    # 2：自摸响应、暗杠/加杠响应、立直响应阶段之杠，以及随之而来的抢杠检查
+    gangcheck = players[who].tehai
+    for i in range(0,len(players[who].tehai)):
+        gangcheck[i] = abs(gangcheck[i])
+    for i in range(0,len(gangcheck)):
+        if gangcheck[i] == gangcheck[i+3]:
+            # ask gang or not ! ______________________________________________
+            gangsymbol = input('gangma?(y/n)',gangcheck[i])
+            gangpai = gangcheck[i]
+            break
+
+    # 抢杠检查
+    if gangsymbol == 'y':
+        for player in players:
+            if player != players[who]:
+                if hupai_okisa.GuoShiWuShuang.check(player.tehai+[gangpai]):
+                    # ask others hu or not ! __________________________________
+
+
+
+
 '''
 def jd3_chupai(who):
     # 3：出牌

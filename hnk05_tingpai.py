@@ -8,6 +8,7 @@ class TingpaiCheck:
         self.tehai13 = [] # 注意这里的手牌变量是13张！表示的是用户的没有摸牌的手牌！
         self.machi = 0
 
+    @staticmethod
     def machi_question(self, tehai13):
         return_ans = []
         for key in numtopai.keys():
