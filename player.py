@@ -8,7 +8,7 @@ class Player:
 
     def __init__(self):
         self.id = ''  # 日后登陆id，暂时空出
-        self.passwd = ''  # 日后登陆密码
+        # self.passwd = ''  # 日后登陆密码
         self.name = ''  # 玩家姓名
         self.gamenum = 0  # 单局游戏中使用的id1234
         self.feng = 0  # 0是东，1是南，2是西，3是北
@@ -33,17 +33,21 @@ class Player:
             'zimo': False
         }
 
-
     def mopai(self,pai):
         # 从牌堆顶摸一张牌
         self.tehai.append(pai)
 
-    def chupai(self):
+
+    def chupai(self, pai):
         # 出一张牌，
         # 为了方便测试先用输入的方式出这张牌
-        pai = input('输入要出的牌')
-        self.tehai.remove(pai)
-        self.river.append(pai)
+        # pai = input('输入要出的牌')
+        if pai in self.tehai:
+            self.tehai.remove(pai)
+            self.river.append(pai)
+        else:
+            raise Exception('要打的牌【%s】并不在玩家【%s】手中！' % (pai, self.name))
+
 
     def hupaicheck(self,pai,base):
         hp = hnk05_hupai_abstest.HupaiCheck()
