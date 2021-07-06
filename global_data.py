@@ -13,6 +13,9 @@ paitonum = {
 }  # 用于将数字转化成牌，给用户看的字典
 
 windtopai = {'dong':31, 'nan':32, 'xi':34, 'bei':35}
+paitowind = {31:'dong', 32:'nan', 34:'xi', 35:'bei'}
+windtonum = {'dong':0, 'nan':1, 'xi':2, 'bei':3}
+numtowind = {0:'dong', 1:'nan', 2:'xi', 3:'bei'}
 yaojiu = [1, 9, 11, 19, 21, 29, 31, 32, 34, 35, 37, 38, 40]  # 幺九字牌
 qingyaojiu = [1, 9, 11, 19, 21, 29]							 # 幺九牌
 jihai = [31, 32, 34, 35, 37, 38, 40]						 # 字牌
