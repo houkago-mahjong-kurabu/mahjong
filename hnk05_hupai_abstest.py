@@ -9,6 +9,9 @@ from global_data import *
 # hupai_dealall也加了fulu的参数，有附录的不判断七对和国士
 # 相应的，qidui和gsws里面不考虑绝对值的事情了，默认传进去的手牌除了进章外都是正的
 
+# 2021/08/04修改 by Muqing:
+# 修改了荔枝的胡牌判断算法，大幅提高了运行速度
+
 
 class HupaiCheck:
 
@@ -48,8 +51,8 @@ class HupaiCheck:
             if len(numtehai) == 2 and numtehai[0] == numtehai[1]:
                 hupaidevide_unranked.append(sorted_ + [numtehai])
             else:
-                for i in range(len(numtehai)):
-                    if (numtehai[i] + 1 in numtehai)  and (numtehai[i] + 2 in numtehai):
+                for i in range(min(4, len(numtehai))):
+                    if (numtehai[i] not in numtehai[i+1:]) and (numtehai[i] + 1 in numtehai)  and (numtehai[i] + 2 in numtehai):
                         numtehainext = numtehai + []
                         i1 = numtehainext.pop(i)
                         a = numtehainext.index(i1 + 1)
@@ -57,13 +60,14 @@ class HupaiCheck:
                         b = numtehainext.index(i1 + 2)
                         b1 = numtehainext.pop(b)
                         hupai(numtehainext, sorted_ + [[i1, a1, b1]])
-                for i in range(0, len(numtehai)):
+                for i in range(3):
                     if i + 2 < len(numtehai) and numtehai[i] == numtehai[i + 1] and numtehai[i] == numtehai[i + 2]:
                         hupai(numtehai[:i] + numtehai[i + 3:], sorted_ + [numtehai[i:i + 3]])
 
         hupai(self.numtehai, [])
         
         for h in hupaidevide_unranked:  #对拆牌结果从小到大进行排序
+            print('h', h)
             h.sort(key=operator.itemgetter(0), reverse=False)
 
         for i in hupaidevide_unranked:  # 对之前找出来的胡牌方式进行去重
@@ -137,7 +141,7 @@ class HupaiCheck:
 if __name__ == '__main__':
     pai = '1m1m1m2m3m4m5m6m7m8m9m9m9m9m'
     hc = HupaiCheck(tehai=pai, numtehai=HupaiCheck.tehaitonumtehai(pai))
-    hc.numtehai = [1,1,2,2,3,3,4,4,5,5,6,6,7,-7]
+    hc.numtehai = [1,1,1,2,2,2,3,3,3,4,4,4,5,5]
     print(hc.hupai_dealall())
     # print(hc.hupai32_deal())
     # hc.hupaiway_usersee()
@@ -148,6 +152,7 @@ if __name__ == '__main__':
 # [1,1,2,2,3,3,4,4,5,5,6,6,7,7], fulu=[['fulu1'],['fulu2']]
 # [1,1,2,2,3,3,4,4,5,5,6,6,7,7]
 # [1,1,2,2,3,3,4,4,5,5,6,6,7,-7]
+# [1,1,1,2,2,2,3,3,3,4,4,4,5,5]
 # [1, 9, 11, 19, 21, 29, 31, 32, 34, 35, 37, 38, 40]
 # [1, 1, 9, 11, 19, 21, 29, 31, 32, 34, 35, 37, 38, 40]
 # [1, 1, 9, 11, 19, 21, 29, 31, 32, 34, 35, 37, 38, 40], fulu=[['fulu']]
